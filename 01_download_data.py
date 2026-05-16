@@ -29,7 +29,7 @@ def download_dataset():
     # dataset's unique ID on Kaggle
     # Analogy: ordering a package online — it gets delivered to a holding facility first
     print("Downloading Ames Housing dataset from Kaggle...")
-    path = kagglehub.dataset_download("competitions/house-prices-advanced-regression-techniques")
+    path = kagglehub.competition_download("house-prices-advanced-regression-techniques")
 
     # Confirm where kagglehub put the temporary files
     print(f"Dataset cached at: {path}")
