@@ -210,3 +210,67 @@ Every house in the test set plotted as a dot — actual price on the x axis, pre
 ---
 
 **Analogy:** It's like getting back a graded exam with your score (RMSE, R²), the dollar value of your mistakes, which questions you weighted most heavily (top features), and a visual map of where you went right and wrong (scatter plot).
+
+__
+
+Evaluation result:
+Excellent results — this is a big improvement over Linear Regression. Let's break everything down:
+
+---
+
+**The training progress:**
+```
+[0]   validation_0-rmse: 0.37517
+[100] validation_0-rmse: 0.07955
+[200] validation_0-rmse: 0.05947
+...
+[999] validation_0-rmse: 0.01240
+```
+You can watch the model getting smarter with every 100 trees. It started with an RMSE of 0.375 and by tree 1000 had dropped all the way to 0.012 on the training set. That's the sequential correction process working in real time.
+
+---
+
+**Model Evaluation:**
+```
+Train RMSE: 0.0124  |  Test RMSE: 0.1339
+Train R²:   0.9990  |  Test R²:   0.9039
+```
+Train R² of 0.9990 is essentially perfect — the model memorized the training data almost completely. But the test R² of 0.9039 is still excellent — it explains 90% of price variation on houses it has never seen. The gap between train and test is still there (overfitting) but the test score is meaningfully better than Linear Regression's 0.8394.
+
+**Dollar error: $23,270** — on average the model's predictions are about $23,000 off from the real price. That's actually working correctly unlike Script 03.
+
+---
+
+**Feature importance — this is the interesting part:**
+
+Compare XGBoost's top features to Linear Regression's:
+
+| XGBoost | Linear Regression |
+|---|---|
+| OverallQual | RoofMatl_CompShg |
+| TotalSF | PoolArea |
+| KitchenAbvGr | PoolQC_None |
+
+XGBoost's top features make complete intuitive sense:
+- **OverallQual** — the overall quality rating of the house is the single strongest predictor of price. Makes total sense
+- **TotalSF** — total square footage is the second most important. Also makes total sense
+- **CentralAir_Y** — whether the house has central air conditioning. Very reasonable
+
+Linear Regression was being thrown off by rare one-hot encoded categories like roof material and pool features. XGBoost correctly identified that overall quality and square footage matter most — exactly what any real estate agent would tell you.
+
+**YearsSinceRemodel** appearing in the top 15 is also satisfying — that was one of the new features we engineered ourselves in Script 02. The model found it useful.
+
+---
+
+**The scatter plot:**
+The green dots in the XGBoost chart cluster more tightly around the red line than the blue dots in the Linear Regression chart — especially in the middle price range. XGBoost is visibly more accurate.
+
+---
+
+**Side by side comparison so far:**
+
+| Model | Test RMSE | Test R² |
+|---|---|---|
+| Linear Regression | 0.1731 | 0.8394 |
+| XGBoost | 0.1339 | 0.9039 |
+
